@@ -2,16 +2,12 @@ package com.techmind.project_enterprise.controller;
 
 import com.techmind.project_enterprise.model.Employee;
 import com.techmind.project_enterprise.model.Enterprise;
-import com.techmind.project_enterprise.model.Profile;
 import com.techmind.project_enterprise.model.Transaction;
 import com.techmind.project_enterprise.repository.IEnterpriseRepository;
-import com.techmind.project_enterprise.repository.IProfileRepository;
 import com.techmind.project_enterprise.repository.ITransactionRepository;
 import com.techmind.project_enterprise.service.IEmployeeService;
 import com.techmind.project_enterprise.service.IEnterpriseService;
-import com.techmind.project_enterprise.service.IProfileService;
 import com.techmind.project_enterprise.service.ITransactionService;
-import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -76,14 +72,11 @@ public class EmployeeController {
 
     }
     @GetMapping("employees/detalle/{id}")
-    public ModelAndView detailEmployee(@PathVariable("id") Integer id,@AuthenticationPrincipal OidcUser principal){
-        if(!service.existSById(id))
-            return new ModelAndView("redirect:/employee/employees");
+    public String detailEmployee(@PathVariable("id") Integer id, Model model, @AuthenticationPrincipal OidcUser principal){
         Employee employee = service.getOne(id).get();
-        ModelAndView mv = new ModelAndView("/employee/detail_employee");
-        mv.addObject("employee", employee);
-        mv.addObject("user", principal.getClaims());
-        return mv;
+        model.addAttribute("employee", employee);
+        model.addAttribute("user", principal.getClaims());
+        return "employee/detail_employee";
     }
     @GetMapping("/employees/editar/{id}")
     public  String formularioEditar(@PathVariable(value = "id") Integer id,Model model,@AuthenticationPrincipal OidcUser principal){
