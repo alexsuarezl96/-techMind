@@ -1,26 +1,15 @@
 package com.techmind.project_enterprise.controller;
 
-import com.techmind.project_enterprise.dto.EnterpriseDTO;
-import com.techmind.project_enterprise.dto.ProfileDTO;
-import com.techmind.project_enterprise.exeptions.ModelNotFoundException;
 import com.techmind.project_enterprise.model.Enterprise;
-import com.techmind.project_enterprise.model.Profile;
 import com.techmind.project_enterprise.service.IEnterpriseService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class EnterpriseController {
@@ -52,14 +41,11 @@ public class EnterpriseController {
 
     }
     @GetMapping("enterprises/detalle/{id}")
-    public ModelAndView detail_enterprise(@PathVariable("id") Long id,@AuthenticationPrincipal OidcUser principal){
-        if(!service.existSById(id))
-            return new ModelAndView("redirect:/enterprise/enterprises");
+    public String detail_enterprise(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal OidcUser principal){
         Enterprise enterprise = service.getOne(id).get();
-        ModelAndView mv = new ModelAndView("/enterprise/detail_enterprise");
-        mv.addObject("enterprise", enterprise);
-        mv.addObject("user", principal.getClaims());
-        return mv;
+        model.addAttribute("enterprise", enterprise);
+        model.addAttribute("user", principal.getClaims());
+        return "enterprise/detail_enterprise";
     }
     @GetMapping("/enterprises/editar/{id}")
     public  String formularioEditar(@PathVariable Long id,Model model,@AuthenticationPrincipal OidcUser principal){
