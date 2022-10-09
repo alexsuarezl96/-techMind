@@ -1,10 +1,6 @@
 package com.techmind.project_enterprise.controller;
 
-import com.techmind.project_enterprise.dto.TransactionDTO;
-import com.techmind.project_enterprise.exeptions.ModelNotFoundException;
-import com.techmind.project_enterprise.model.Employee;
 import com.techmind.project_enterprise.model.Enterprise;
-import com.techmind.project_enterprise.model.Profile;
 import com.techmind.project_enterprise.model.Transaction;
 import com.techmind.project_enterprise.repository.IEnterpriseRepository;
 import com.techmind.project_enterprise.service.IEnterpriseService;
@@ -13,18 +9,13 @@ import lombok.Data;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Controller
@@ -64,14 +55,11 @@ public class TransactionController {
 
     }
     @GetMapping("transactions/detalle/{id}")
-    public ModelAndView detailTransaction(@PathVariable("id") Long id,@AuthenticationPrincipal OidcUser principal){
-        if(!service.existSById(id))
-            return new ModelAndView("redirect:/transaction/transactions");
+    public String detailTransaction(@PathVariable("id") Long id, Model model, @AuthenticationPrincipal OidcUser principal){
         Transaction transaction = service.getOne(id).get();
-        ModelAndView mv = new ModelAndView("/transaction/detail_transaction");
-        mv.addObject("transaction", transaction);
-        mv.addObject("user", principal.getClaims());
-        return mv;
+        model.addAttribute("transaction", transaction);
+        model.addAttribute("user", principal.getClaims());
+        return "transaction/detail_transaction";
     }
     @GetMapping("/transactions/editar/{id}")
     public  String formularioEditar(@PathVariable(value = "id") Long id,Model model,@AuthenticationPrincipal OidcUser principal){
